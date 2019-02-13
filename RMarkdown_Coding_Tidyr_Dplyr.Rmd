@@ -22,6 +22,42 @@ library(tidyr)
     - move from wide to long 
 *General QA 
 
+###This is the citation for the dataset (https://knb.ecoinformatics.org/view/df35b.304.2)
+Mike Byerly. Alaska commercial salmon catches by management region (1886- 1997). urn:node:GOA. df35b.304.2.
+
+```{r}
+catch_original <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method = "libcurl"),
+                    stringsAsFactors = FALSE)
+head(catch_original)
+```
+
+### Removing the 'ALL' column and the 'notesRegCode' column from the dataframe
+  using a function called 'select'
+  command + shift + m is the shortcut for the pipe function %>% 
+  To make data into the "Long" format, using the function 'gather'
+  
+This is gathering the data over every column except for the data within the columns of Region and Year  
+    * gather(key = "species", value = "catch", -Region, -Year)   
+  
+  
+```{r}
+
+catch_long <- catch_original %>% 
+    #select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) #This selects the columns you want
+    select(-All,-notesRegCode) %>% #This de-selects the columns you don't want
+    gather(key = "species", value = "catch", -Region, -Year) 
+
+head(catch_long)
+```
+
+###For some reason if we wanted to go back and have the data in a wide format, use the function 'spread' 
+```{r}
+catch_wide <- catch_long %>%  
+    spread(key = "species", value = "catch")
+```
+
+
+
 # Join the Region Definitions 
 
 
