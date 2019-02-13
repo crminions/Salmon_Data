@@ -1,0 +1,31 @@
+---
+title: "Data_Remformatting"
+author: "Christina Minions"
+date: "2/13/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,warning = FALSE, message = FALSE} 
+#Load in the Libraries 
+library(dplyr)
+library(tidyr)
+```
+
+# Reformat the Catch Data 
+
+*Remove the "all" column 
+*Create a species column 
+    - move from wide to long 
+*General QA 
+
+# Join the Region Definitions 
+
+
+
+# Misc. Functions 
+
+
