@@ -13,7 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - convert to C  
 
+Sourcing functions within an rscript is handy - do not have to copy and paste functions into a new script. Once you have created the function within an R script, you can just call the script using the source function, and the function(s) that you created will be loaded into your R environment 
+
 ```{r}
+source("Convert.R") #after putting the functions in an Rscript and saving, you can call the functions at the start of code 
 airtemps <-c(212, 100, 32, 64, 0, -20)
 
 
@@ -75,8 +78,6 @@ fahr_to_celsius <- function(fahr) {
   celsius <- (fahr-32) * 5/9   
   return(celsius)   
 }
-
-
 
 
 
