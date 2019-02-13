@@ -319,10 +319,76 @@ head(year_mean)</code></pre>
 ## 4  1993   2271847.
 ## 5  1994   2304494.
 ## 6  1995   2556000</code></pre>
+<div id="load-the-region-defs-file" class="section level3">
+<h3>Load the Region Defs File</h3>
+<pre class="r"><code>region_defs &lt;- read.csv(url(&quot;https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1&quot;,
+                            method = &quot;libcurl&quot;),
+                        stringsAsFactors = FALSE) %&gt;% 
+    select(code, mgmtArea)
+
+head(region_defs)</code></pre>
+<pre><code>##      code                                  mgmtArea
+## 1     GSE              Unallocated Southeast Alaska
+## 2     NSE                 Northern Southeast Alaska
+## 3     SSE                 Southern Southeast Alaska
+## 4     YAK                                   Yakutat
+## 5 PWSmgmt      Prince William Sound Management Area
+## 6     BER Bering River Subarea Copper River Subarea</code></pre>
+</div>
+<div id="joing-two-dataframes" class="section level3">
+<h3>Joing two dataframes</h3>
+<pre class="r"><code>catch_joined &lt;- left_join(catch_clean, region_defs, by = c(&quot;Region&quot; = &quot;code&quot;)) 
+
+#this will join region_defs to catch_clean 
+#by = c(&quot;Region&quot; = &quot;code&quot;) this means that the left (Catch_clean file column name) hand column is equal to the column of the name &quot;code&quot;
+
+head(catch_joined)</code></pre>
+<pre><code>##   Region Year species catch                  mgmtArea
+## 1    SSE 1886 Chinook     0 Southern Southeast Alaska
+## 2    SSE 1887 Chinook     0 Southern Southeast Alaska
+## 3    SSE 1888 Chinook     0 Southern Southeast Alaska
+## 4    SSE 1889 Chinook     0 Southern Southeast Alaska
+## 5    SSE 1890 Chinook     0 Southern Southeast Alaska
+## 6    SSE 1891 Chinook     0 Southern Southeast Alaska</code></pre>
+<p>you can also list the pairs to join by multiple columns.</p>
+<pre class="r"><code>dates_df &lt;- data.frame(date = c(&quot;5/24/1930&quot;,
+                                &quot;5/25/1930&quot;,
+                                &quot;5/26/1930&quot;,
+                                &quot;5/27/1930&quot;,
+                                &quot;5/28/1930&quot;),
+                       stringsAsFactors = FALSE)</code></pre>
+</div>
+<div id="separating-the-components-of-one-column-into-other-columns-using-the-separate-function.-example-you-can-break-down-a-date-column-into-year-month-and-day-columns" class="section level3">
+<h3>separating the components of one column into other columns using the separate function. Example: you can break down a “Date” column into Year, month and day columns</h3>
+<pre class="r"><code>dates_split &lt;- dates_df %&gt;% 
+  separate(date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep = &quot;/&quot;, remove = F)
+
+#into is the what names of columns you want to split into 
+#Sep will be by what character you want to separate by 
+#remove = F will leave the original column in place 
+
+head(dates_split)</code></pre>
+<pre><code>##        date month day year
+## 1 5/24/1930     5  24 1930
+## 2 5/25/1930     5  25 1930
+## 3 5/26/1930     5  26 1930
+## 4 5/27/1930     5  27 1930
+## 5 5/28/1930     5  28 1930</code></pre>
+<pre class="r"><code>dates_unite &lt;- dates_split %&gt;% 
+  unite(col = date_iso, year,month,day, sep = &quot;-&quot;) #columns that you want to unite, want these to be joined by separated by a dash 
+
+head(dates_unite)</code></pre>
+<pre><code>##        date  date_iso
+## 1 5/24/1930 1930-5-24
+## 2 5/25/1930 1930-5-25
+## 3 5/26/1930 1930-5-26
+## 4 5/27/1930 1930-5-27
+## 5 5/28/1930 1930-5-28</code></pre>
+</div>
+<div id="formating-timestamp---the-best-format-for-a-date-is-yyyymmdd" class="section level3">
+<h3>Formating timestamp - the best format for a date is YYYY/MM/DD</h3>
 </div>
 </div>
-<div id="join-the-region-definitions" class="section level1">
-<h1>Join the Region Definitions</h1>
 </div>
 <div id="misc.-functions" class="section level1">
 <h1>Misc. Functions</h1>

@@ -148,7 +148,9 @@ head(region_defs)
 
 ```
 
-###
+
+
+###Joing two dataframes 
 ```{r}
 catch_joined <- left_join(catch_clean, region_defs, by = c("Region" = "code")) 
 
@@ -162,7 +164,40 @@ head(catch_joined)
 you can also list the pairs to join by multiple columns. 
 
 
-# Join the Region Definitions 
+```{r}
+dates_df <- data.frame(date = c("5/24/1930",
+                                "5/25/1930",
+                                "5/26/1930",
+                                "5/27/1930",
+                                "5/28/1930"),
+                       stringsAsFactors = FALSE)
+
+```
+ 
+
+###separating the components of one column into other columns using the separate function. Example: you can break down a "Date" column into Year, month and day columns 
+
+```{r}
+
+dates_split <- dates_df %>% 
+  separate(date, into = c("month", "day", "year"), sep = "/", remove = F)
+
+#into is the what names of columns you want to split into 
+#Sep will be by what character you want to separate by 
+#remove = F will leave the original column in place 
+
+head(dates_split)
+
+```
+
+```{r}
+dates_unite <- dates_split %>% 
+  unite(col = date_iso, year,month,day, sep = "-") #columns that you want to unite, want these to be joined by separated by a dash 
+
+head(dates_unite)
+```
+### Formating timestamp - the best format for a date is YYYY/MM/DD 
+
 
 
 
