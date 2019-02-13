@@ -8,3 +8,83 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+#work with some data in degrees F 
+
+- convert to C  
+
+```{r}
+airtemps <-c(212, 100, 32, 64, 0, -20)
+
+
+airtemp1 <- (airtemps[1]-32)* 5/9
+```
+
+
+
+
+#Write a function to do that
+
+```{r}
+fahr_to_celsius <- function(fahr) {
+  celsius <- (fahr-32) * 5/9   #assigning this value to a object called celsius 
+  return(celsius)   #use the return function to be explicit about what value is going to be the ouput
+}
+
+#once you run this, the function is in the R environment and avaible for use! 
+
+
+fahr_to_celsius(airtemps[1]) #runs function for just first column 
+
+celsius_temps <- fahr_to_celsius(airtemps) #runs function for all objects in this vector 
+celsius_temps
+
+```
+
+#write a function to go C to F 
+Creating opposite function to return back F 
+```{r}
+
+Cels_to_Fahr <- function(Cels) {
+  FahrenH <- (celsius_temps) * 9/5 + 32   #assigning this value to a object called celsius 
+  return(FahrenH)   #use the return function to be explicit about what value is going to be the ouput
+}
+
+
+Cels_to_Fahr(celsius_temps) #runs function for just first column 
+
+Back_to_FAHR <- Cels_to_Fahr(celsius_temps) #runs function for all objects in this vector 
+
+Back_to_FAHR
+
+
+```
+
+
+
+# Show how to document Functions 
+
+```{r}
+
+#'Coverts numeric temperature data from degrees Fahrenhiet to Degrees Celsius
+#'
+#'
+#'@param fahr the value in Fahrenhiet to be converted
+#'@return the converted value in Celsius 
+fahr_to_celsius <- function(fahr) {
+  celsius <- (fahr-32) * 5/9   
+  return(celsius)   
+}
+
+
+
+
+
+```
+
+
+
+
+
+
+
