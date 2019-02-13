@@ -196,10 +196,30 @@ dates_unite <- dates_split %>%
 
 head(dates_unite)
 ```
-### Formating timestamp - the best format for a date is YYYY/MM/DD 
+##### Formating timestamp - the best format for a date is YYYY/MM/DD 
+
+#####
+
+```{r}
+library(stringr)
+
+str_pad("5",2, side = "left", pad = "0")
+
+#what this code does is that it takes this single value string, and will add another character to it. This will be adding a zero to the left side of the 5. 
+```
 
 
 
+```{r}
+write.csv(catch_clean,"catch_clean.csv", row.names = F) 
+#This writes file to main repository 
+#If you don't want it to be uploaded to Github, you can alter the settings in the Rignore file 
+#Like this: 
+##csv 
+#*.csv
+
+#If you want to exclude JUST this particular csv file, just have the entire file name 
+```
 
 # Misc. Functions 
 
