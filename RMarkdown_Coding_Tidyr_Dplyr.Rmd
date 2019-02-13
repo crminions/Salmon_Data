@@ -56,6 +56,86 @@ catch_wide <- catch_long %>%
     spread(key = "species", value = "catch")
 ```
 
+##Clean up data 
+
+*rename column 'Catch' to 'catch_thousands' 
+*change catch column from character to numeric 
+*Create new catch column in units: `#` of fish 
+
+For the rename function the new name of the column is equal to the name of the old column  
+The mutate function will allow you to manipulate the values of a column 
+
+ mutate(catch_thousands = ifelse(catch_thousands %in% c("I","M","Z"), 1, catch_thousands))
+
+  ^can use this code to select and replace multiple different values with the same value. So if for some reason the dataframe had I, M and Z within in it and you wanted to replace all with 1. 
+```{r}
+
+catch_clean <- catch_long %>% 
+  rename(catch_thousands = catch) %>% 
+  mutate(catch_thousands = ifelse(catch_thousands == "I", 1, catch_thousands)) %>%  
+  mutate(catch_thousands = as.numeric(catch_thousands)) %>% 
+  mutate(catch = catch_thousands * 1000) %>% 
+  select(-catch_thousands)
+
+  
+head(catch_clean)  
+```
+
+##Look for where as.numeric failed 
+  Run this code to investigate.  
+  For some reason the value got transformed from a 1 to an I when the files were converted after   looking at the original data file.   
+  Need to change the I back to a 1 within R. DO NOT CHANGE the original data file 
+  
+  "mutate(catch_thousands = ifelse(catch_thousands == "I", 1, catch_thousands))" 
+    * For this line of code, what it means is that if in the datafram "catch_thousands", any         value is equal to I, the value will be replaced with 1. If values do not equal I, the          original value of catch_thousands for the row will be used. 
+    
+```{r, eval = F, echo = F}
+#Wanted to keep this code for my reference, but with these additions, it will not be in the output and R will not run it. 
+test <- as.numeric(catch_long$catch) 
+i <- which(is.na(test) == TRUE) # which values in test are equal to NA - shows 401 (this row)
+catch_long[i,]
+
+```
+
+##Split - Apply - Combine 
+
+    *calculate mean catch by species 
+    
+```{r}
+
+species_mean <- catch_clean %>% 
+  group_by(species, Region) %>%  #Grouping by species and region 
+  summarize(catch_mean = mean(catch), #creating a column of the mean, using the values from catch.
+            num_obs = n())            #Number of observations used to calculate the mean 
+
+head(species_mean)
+
+
+```
+ by grouping by species and region you are calculating the mean for each species for each region. 
+
+```{r}
+species_max <- catch_clean %>% 
+  group_by(species, Region) %>%  #Grouping by species and region 
+  summarize(catch_max = max(catch), #creating a column of the mean, using the values from catch.
+            num_obs = n())            #Number of observations used to calculate the mean 
+
+head(species_max)
+```
+
+
+```{r}
+year_mean <- catch_clean %>%  
+  group_by(Year) %>%  
+  summarize(catch_mean = mean(catch)) %>% 
+  arrange(Year) %>%  # this is arrange the data in ascending order by year, for numeric values put a -for decesending 
+  filter(Year >= 1990) #filters the data based on this condition. If we were only interested in years later than 1990 inclusive.  #to get the middle of a section: filter(Year <= 1990 & Year >= 1960). 
+#use | for "or". so this line of code will give you year less than or equal to 1990 and greater or equal to 1960 
+
+head(year_mean)
+```
+
+
 
 
 # Join the Region Definitions 

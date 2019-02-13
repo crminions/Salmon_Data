@@ -235,6 +235,91 @@ head(catch_long)</code></pre>
 <pre class="r"><code>catch_wide &lt;- catch_long %&gt;%  
     spread(key = &quot;species&quot;, value = &quot;catch&quot;)</code></pre>
 </div>
+<div id="clean-up-data" class="section level2">
+<h2>Clean up data</h2>
+<p><em>rename column ‘Catch’ to ‘catch_thousands’ </em>change catch column from character to numeric *Create new catch column in units: <code>#</code> of fish</p>
+<p>For the rename function the new name of the column is equal to the name of the old column<br />
+The mutate function will allow you to manipulate the values of a column</p>
+<p>mutate(catch_thousands = ifelse(catch_thousands %in% c(“I”,“M”,“Z”), 1, catch_thousands))</p>
+<p>^can use this code to select and replace multiple different values with the same value. So if for some reason the dataframe had I, M and Z within in it and you wanted to replace all with 1.</p>
+<pre class="r"><code>catch_clean &lt;- catch_long %&gt;% 
+  rename(catch_thousands = catch) %&gt;% 
+  mutate(catch_thousands = ifelse(catch_thousands == &quot;I&quot;, 1, catch_thousands)) %&gt;%  
+  mutate(catch_thousands = as.numeric(catch_thousands)) %&gt;% 
+  mutate(catch = catch_thousands * 1000) %&gt;% 
+  select(-catch_thousands)
+
+  
+head(catch_clean)  </code></pre>
+<pre><code>##   Region Year species catch
+## 1    SSE 1886 Chinook     0
+## 2    SSE 1887 Chinook     0
+## 3    SSE 1888 Chinook     0
+## 4    SSE 1889 Chinook     0
+## 5    SSE 1890 Chinook     0
+## 6    SSE 1891 Chinook     0</code></pre>
+</div>
+<div id="look-for-where-as.numeric-failed" class="section level2">
+<h2>Look for where as.numeric failed</h2>
+<p>Run this code to investigate.<br />
+For some reason the value got transformed from a 1 to an I when the files were converted after looking at the original data file.<br />
+Need to change the I back to a 1 within R. DO NOT CHANGE the original data file</p>
+<p>“mutate(catch_thousands = ifelse(catch_thousands ==”I“, 1, catch_thousands))” * For this line of code, what it means is that if in the datafram “catch_thousands”, any value is equal to I, the value will be replaced with 1. If values do not equal I, the original value of catch_thousands for the row will be used.</p>
+</div>
+<div id="split---apply---combine" class="section level2">
+<h2>Split - Apply - Combine</h2>
+<pre><code>*calculate mean catch by species </code></pre>
+<pre class="r"><code>species_mean &lt;- catch_clean %&gt;% 
+  group_by(species, Region) %&gt;%  #Grouping by species and region 
+  summarize(catch_mean = mean(catch), #creating a column of the mean, using the values from catch.
+            num_obs = n())            #Number of observations used to calculate the mean 
+
+head(species_mean)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+## # Groups:   species [1]
+##   species Region catch_mean num_obs
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;   &lt;int&gt;
+## 1 Chinook ALU          23.0      87
+## 2 Chinook BER          19.6     102
+## 3 Chinook BRB       76211.      114
+## 4 Chinook CHG        1536.      110
+## 5 Chinook CKI       43876.      105
+## 6 Chinook COP       19798.       94</code></pre>
+<p>by grouping by species and region you are calculating the mean for each species for each region.</p>
+<pre class="r"><code>species_max &lt;- catch_clean %&gt;% 
+  group_by(species, Region) %&gt;%  #Grouping by species and region 
+  summarize(catch_max = max(catch), #creating a column of the mean, using the values from catch.
+            num_obs = n())            #Number of observations used to calculate the mean 
+
+head(species_max)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+## # Groups:   species [1]
+##   species Region catch_max num_obs
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;   &lt;int&gt;
+## 1 Chinook ALU         2000      87
+## 2 Chinook BER         1000     102
+## 3 Chinook BRB       253000     114
+## 4 Chinook CHG        20000     110
+## 5 Chinook CKI       188000     105
+## 6 Chinook COP        67000      94</code></pre>
+<pre class="r"><code>year_mean &lt;- catch_clean %&gt;%  
+  group_by(Year) %&gt;%  
+  summarize(catch_mean = mean(catch)) %&gt;% 
+  arrange(Year) %&gt;%  # this is arrange the data in ascending order by year, for numeric values put a -for decesending 
+  filter(Year &gt;= 1990) #filters the data based on this condition. If we were only interested in years later than 1990 inclusive.  #to get the middle of a section: filter(Year &lt;= 1990 &amp; Year &gt;= 1960). 
+#use | for &quot;or&quot;. so this line of code will give you year less than or equal to 1990 and greater or equal to 1960 
+
+head(year_mean)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##    Year catch_mean
+##   &lt;int&gt;      &lt;dbl&gt;
+## 1  1990   1824212.
+## 2  1991   2229647.
+## 3  1992   1608541.
+## 4  1993   2271847.
+## 5  1994   2304494.
+## 6  1995   2556000</code></pre>
+</div>
 </div>
 <div id="join-the-region-definitions" class="section level1">
 <h1>Join the Region Definitions</h1>
