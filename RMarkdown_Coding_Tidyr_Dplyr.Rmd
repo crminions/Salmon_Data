@@ -135,7 +135,31 @@ year_mean <- catch_clean %>%
 head(year_mean)
 ```
 
+### Load the Region Defs File 
 
+```{r}
+region_defs <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1",
+                            method = "libcurl"),
+                        stringsAsFactors = FALSE) %>% 
+    select(code, mgmtArea)
+
+head(region_defs)
+
+
+```
+
+###
+```{r}
+catch_joined <- left_join(catch_clean, region_defs, by = c("Region" = "code")) 
+
+#this will join region_defs to catch_clean 
+#by = c("Region" = "code") this means that the left (Catch_clean file column name) hand column is equal to the column of the name "code"
+
+head(catch_joined)
+
+
+```
+you can also list the pairs to join by multiple columns. 
 
 
 # Join the Region Definitions 
